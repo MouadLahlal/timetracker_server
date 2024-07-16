@@ -11,7 +11,20 @@ router.post('/', async (req: Request, res: Response) => {
         const client = await getRedis();
 
         for (const domain in data) {
-            await client.set(domain, JSON.stringify(data[domain]));
+            let value;
+            if (await client.exists(domain)) {
+                value = JSON.parse(await client.get(domain) || "");
+                for (const day in data[domain]) {
+                    if (value[day]) {
+                        value[day] += data[domain][day];
+                    } else {
+                        value[day] = data[domain][day];
+                    }
+                }
+            } else {
+                value = data[domain];
+            }
+            await client.set(domain, JSON.stringify(value));
         }
 
         for (const domain in data) {
