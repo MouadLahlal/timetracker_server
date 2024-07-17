@@ -11,35 +11,33 @@ router.post('/', async (req: Request, res: Response) => {
         const client = await getRedis();
 
         for (const domain in data) {
-            let value;
-            if (await client.exists(domain)) {
-                value = JSON.parse(await client.get(domain) || "");
-                for (const day in data[domain]) {
-                    if (value[day]) {
-                        value[day] += data[domain][day];
-                    } else {
-                        value[day] = data[domain][day];
-                    }
-                }
-            } else {
-                value = data[domain];
+            let value = JSON.parse(await client.get(domain) || "{}");
+            for (const day in data[domain]) {
+                value[day] = (value[day] || 0) + data[domain][day];
             }
             await client.set(domain, JSON.stringify(value));
         }
 
-        for (const domain in data) {
-            let value = await client.get(domain) || "";
-            console.log(domain.toUpperCase());
-            console.log(`${JSON.stringify(JSON.parse(value), null, 4)}`); 
-        }
-
-        // can i remove await 'cause i don't need to wait for redis client to disconnect
         await client.disconnect();
 
-        res.send("ok");
+        res.status(200).json({
+            message: "Time tracked successfully"
+        });
     } catch (error) {
         res.send(error);
     }
+});
+
+router.get('/', async (req: Request, res: Response) => {
+    const client = await getRedis();
+
+    let memory: {[key:string]:string} = {};
+    
+    for await (const key of client.scanIterator()) {
+        memory[key] = JSON.parse(await client.get(key) || "");
+    }
+    
+    res.json(memory);
 });
 
 export default router;
