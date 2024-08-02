@@ -28,16 +28,4 @@ router.post('/', async (req: Request, res: Response) => {
     }
 });
 
-router.get('/', async (req: Request, res: Response) => {
-    const client = await getRedis();
-
-    let memory: {[key:string]:string} = {};
-    
-    for await (const key of client.scanIterator()) {
-        memory[key] = JSON.parse(await client.get(key) || "");
-    }
-    
-    res.json(memory);
-});
-
 export default router;

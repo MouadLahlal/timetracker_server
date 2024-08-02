@@ -2,11 +2,15 @@ import { Pool } from 'pg';
 import { createClient } from 'redis';
 
 const pool = new Pool({
-    host: '',
-    user: '',
-    max: 0,
-    idleTimeoutMillis: 0,
-    connectionTimeoutMillis: 0
+    host: '127.0.0.1',
+    user: 'postgres',
+	password: 'password',
+	database: 'postgres',
+	port: 5432
+});
+
+pool.on('error', (err: Error, client) => {
+	console.log(err.message);
 });
 
 async function getRedis() {
@@ -25,17 +29,18 @@ export {
 
 /*
 WEBSITE
-    id-website
+    id
     domain
-    id-account
+    // id-account
 
-TRACKED-TIME
-    id-tt
+TRACKEDTIME
+    id
     day
     time (seconds)
-    id-website
-    id-account
+    id_website
+    // id-account
 
+*for now it won't be implemented*
 ACCOUNT
     id-account
     username
