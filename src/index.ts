@@ -14,7 +14,7 @@ cron.schedule('0 */1 * * *', redisToDb); // every hour
 app.use(express.json());
 app.use(cors<Request>());
 
-app.use('/test', extensionRoute);
+app.use('/extension', extensionRoute);
 app.use('/time', timeRoute);
 
 app.listen(port, () => {

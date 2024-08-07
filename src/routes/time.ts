@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import { getRedis } from "../storage";
+import { pool, getRedis } from "../storage";
 import { getDateString } from "../utils";
 
 const router: Router = Router();
@@ -13,11 +13,28 @@ router.get('/today', async (req: Request, res: Response) => {
     for await (const key of client.scanIterator()) {
         memory[key] = JSON.parse(await client.get(key) || "")[today];
     }
+
+	let data = await pool.query('SELECT * FROM trackedtime JOIN website ON trackedtime.id_website = website.id WHERE day = $1', [today]);
+	for (const row of data.rows) {
+		if (memory[row.domain]) {
+			memory[row.domain] += row.time;
+		} else {
+			memory[row.domain] = row.time;
+		}
+	}
     
     res.json(memory);
 });
 
 // this endpoint will return data from database
-router.get('/week', async (req: Request, res: Response) => {});
+router.get('/week', async (req: Request, res: Response) => {
+	const db = await pool.connect();
+
+	let data = await db.query('SELECT * FROM trackedtime JOIN website ON trackedtime.id_website = website.id WHERE day > $1', [getDateString(new Date(Date.now() - 604800000))]);
+
+	console.log(getDateString(new Date(Date.now() - 604800000)));
+	res.json(data);
+
+});
 
 export default router;

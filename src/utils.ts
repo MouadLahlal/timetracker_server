@@ -1,10 +1,10 @@
 import { pool } from './storage';
 
-function getDateString() {
-    let today = new Date();
-    let todayDate = today.getDate();
-    //return `${today.getFullYear()}-${today.getMonth() + 1}-${todayDate < 10 ? `0${todayDate}` : todayDate}`;
-	return `${todayDate}.${today.getMonth() +1}.${today.getFullYear()}`;
+function getDateString(date?: Date) {
+    let today = date ? date : new Date();
+    let day = today.getDate();
+	let month = today.getMonth()+1;
+	return `${today.getFullYear()}-${month < 10 ? `0${month}` : month}-${day < 10 ? `0${day}` : day}`;
 }
 
 async function websiteInDb(domain: string) {
