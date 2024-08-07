@@ -7,7 +7,7 @@ const router: Router = Router();
 // TODO : clean redis cache so that it contains only today data
 router.get('/today', async (req: Request, res: Response) => {
     const client = await getRedis();
-    let memory: {[key:string]:string} = {};
+    let memory: {[key:string]:number} = {};
     let today: string = getDateString();
     
     for await (const key of client.scanIterator()) {
@@ -22,6 +22,10 @@ router.get('/today', async (req: Request, res: Response) => {
 			memory[row.domain] = row.time;
 		}
 	}
+
+	let entries = Object.entries(memory);
+	entries.sort((a, b) => b[1]-a[1]);
+	memory = Object.fromEntries(entries);
     
     res.json(memory);
 });
