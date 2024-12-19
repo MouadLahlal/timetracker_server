@@ -36,7 +36,7 @@ router.get('/week', async (req: Request, res: Response) => {
 
 	let data = await db.query('SELECT * FROM trackedtime JOIN website ON trackedtime.id_website = website.id WHERE day > $1', [getDateString(new Date(Date.now() - 604800000))]);
 
-	console.log(getDateString(new Date(Date.now() - 604800000)));
+	//console.log(getDateString(new Date(Date.now() - 604800000)));
 	res.json(data);
 
 });

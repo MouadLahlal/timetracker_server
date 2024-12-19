@@ -2,7 +2,7 @@ import { pool, getRedis } from './storage';
 import { getDateString, websiteInDb } from './utils';
 
 function log(msg: any) {
-	console.log(`${getDateString()} -- ${typeof msg === "string" ? msg : JSON.stringify(msg)}`);
+	//console.log(`${getDateString()} -- ${typeof msg === "string" ? msg : JSON.stringify(msg)}`);
 }
 
 async function redisToDb () {

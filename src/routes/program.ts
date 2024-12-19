@@ -7,15 +7,15 @@ const router = Router();
 router.post('/', async (req: Request, res: Response) => {
     try {
         const data: Website = req.body;
-
         const client = await getRedis();
 
         for (const domain in data) {
+			//console.log(domain);
             let value = JSON.parse(await client.get(domain) || "{}");
             for (const day in data[domain]) {
                 value[day] = (value[day] || 0) + data[domain][day];
             }
-            await client.set(domain, JSON.stringify(value));
+            await client.set(encodeURIComponent(domain), JSON.stringify(value));
         }
 
         await client.disconnect();
@@ -29,3 +29,4 @@ router.post('/', async (req: Request, res: Response) => {
 });
 
 export default router;
+

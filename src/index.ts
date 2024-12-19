@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import extensionRoute from './routes/extension';
+import programRoute from './routes/program';
 import timeRoute from './routes/time';
 import cors from 'cors';
 import cron from 'node-cron';
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use(cors<Request>());
 
 app.use('/extension', extensionRoute);
+app.use('/program', programRoute);
 app.use('/time', timeRoute);
 
 app.listen(port, () => {
